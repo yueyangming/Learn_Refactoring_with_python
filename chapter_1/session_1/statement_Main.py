@@ -8,16 +8,7 @@ from utils import load_json
 
 
 def statement(invoice, plays):
-    totalAmount = 0
-    volumeCredits = 0
-    result = 'Statement for {}'.format(invoice['customer'])
-
-    # const format = new Intl.NumberFormat("en-US",
-    #                   {style: "currency", currency: "USD",
-    #                    minimumFractionDigits: 2}).format;
-
-    for perf in invoice['performances']:
-        play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
+    def amountFor(perf, play):
         thisAmount = 0
 
         # As there is no switch in python, i use if statement instead.
@@ -36,6 +27,16 @@ def statement(invoice, plays):
 
         else:
             raise UserWarning('unknown type: {}'.format(play['type']))
+        return thisAmount
+
+    totalAmount = 0
+    volumeCredits = 0
+    result = 'Statement for {}'.format(invoice['customer'])
+
+    for perf in invoice['performances']:
+        play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
+
+        thisAmount = amountFor(perf, play)
 
         # add volume credits
         volumeCredits += max(perf['audience'] - 30, 0)
