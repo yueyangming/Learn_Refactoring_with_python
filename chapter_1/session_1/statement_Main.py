@@ -8,26 +8,26 @@ from utils import load_json
 
 
 def statement(invoice, plays):
-    def amountFor(perf, play):
-        thisAmount = 0
+    def amountFor(aPerformance, play):
+        result = 0
 
         # As there is no switch in python, i use if statement instead.
         if play['type'] == 'tragedy':
-            thisAmount = 40000
-            if perf['audience'] > 30:
-                thisAmount += 1000 * (perf['audience'] - 30)
+            result = 40000
+            if aPerformance['audience'] > 30:
+                result += 1000 * (aPerformance['audience'] - 30)
             # break
 
         elif play['type'] == 'comedy':
-            thisAmount = 30000
-            if perf['audience'] > 20:
-                thisAmount += 10000 + 500 * (perf['audience'] - 20)
-            thisAmount += 300 * perf['audience']
+            result = 30000
+            if aPerformance['audience'] > 20:
+                result += 10000 + 500 * (aPerformance['audience'] - 20)
+            result += 300 * aPerformance['audience']
             # break
 
         else:
             raise UserWarning('unknown type: {}'.format(play['type']))
-        return thisAmount
+        return result
 
     totalAmount = 0
     volumeCredits = 0
@@ -36,8 +36,6 @@ def statement(invoice, plays):
     for perf in invoice['performances']:
         play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
 
-        thisAmount = amountFor(perf, play)
-
         # add volume credits
         volumeCredits += max(perf['audience'] - 30, 0)
         # add extra credit for every ten comedy attendees
@@ -45,8 +43,8 @@ def statement(invoice, plays):
             volumeCredits += math.floor(perf['audience'] / 5)
 
         # print line for this order
-        result += '  {}: $%.2f  ({} seats) \n'.format(play['name'], perf['audience']) %(thisAmount / 100)
-        totalAmount += thisAmount
+        result += '  {}: $%.2f  ({} seats) \n'.format(play['name'], perf['audience']) % (amountFor(perf, play) / 100)
+        totalAmount += amountFor(perf, play)
     result += 'Amount owed is $%.2f\n' % (totalAmount / 100)
     result += 'You earned $%.2f credits\n' % volumeCredits
     return result
