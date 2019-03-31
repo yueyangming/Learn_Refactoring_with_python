@@ -48,7 +48,13 @@ def statement(invoice, plays):
             result += volumeCreditsFor(perf, play)
         return result
 
-    totalAmount = 0
+    def totalAmount(invoice, plays):
+        result = 0
+        for perf in invoice['performances']:
+            play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
+            result += amountFor(perf, play)
+        return result
+
     result = 'Statement for {}'.format(invoice['customer'])
 
     for perf in invoice['performances']:
@@ -56,9 +62,8 @@ def statement(invoice, plays):
 
         # print line for this order
         result += '  {}: {}  ({} seats) \n'.format(play['name'], usd(amountFor(perf, play)), perf['audience'])
-        totalAmount += amountFor(perf, play)
 
-    result += 'Amount owed is {}\n'.format(usd(totalAmount))
+    result += 'Amount owed is {}\n'.format(usd(totalAmount(invoice, plays)))
     result += 'You earned {} credits\n'.format(totalVolumeCredits(invoice, plays))
     return result
 
