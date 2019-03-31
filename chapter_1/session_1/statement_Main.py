@@ -41,19 +41,25 @@ def statement(invoice, plays):
         result = '$%.2f' % (aNumber / 100)
         return result
 
+    def totalVolumeCredits(invoice, plays):
+        result = 0
+        for perf in invoice['performances']:
+            play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
+            result += volumeCreditsFor(perf, play)
+        return result
+
     totalAmount = 0
-    volumeCredits = 0
     result = 'Statement for {}'.format(invoice['customer'])
 
     for perf in invoice['performances']:
         play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
 
-        volumeCredits += volumeCreditsFor(perf, play)
         # print line for this order
         result += '  {}: {}  ({} seats) \n'.format(play['name'], usd(amountFor(perf, play)), perf['audience'])
         totalAmount += amountFor(perf, play)
+
     result += 'Amount owed is {}\n'.format(usd(totalAmount))
-    result += 'You earned {} credits\n'.format(volumeCredits)
+    result += 'You earned {} credits\n'.format(totalVolumeCredits(invoice, plays))
     return result
 
 
