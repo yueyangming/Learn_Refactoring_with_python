@@ -44,10 +44,10 @@ def statement(invoice, plays):
             volumeCredits += math.floor(perf['audience'] / 5)
 
         # print line for this order
-        result += '  {}: ${}  ({} seats) \n'.format(play['name'], thisAmount / 100, perf['audience'])
+        result += '  {}: $%.2f  ({} seats) \n'.format(play['name'], perf['audience']) %(thisAmount / 100)
         totalAmount += thisAmount
-    result += 'Amount owed is ${}\n'.format(totalAmount / 100)
-    result += 'You earned ${} credits\n'.format(volumeCredits)
+    result += 'Amount owed is $%.2f\n' % (totalAmount / 100)
+    result += 'You earned $%.2f credits\n' % volumeCredits
     return result
 
 
