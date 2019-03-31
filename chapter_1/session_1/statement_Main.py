@@ -29,6 +29,14 @@ def statement(invoice, plays):
             raise UserWarning('unknown type: {}'.format(play['type']))
         return result
 
+    def volumeCreditsFor(aPerformance, play):
+        result = 0
+        # add volume credits
+        result += max(aPerformance['audience'] - 30, 0)
+        if play['type'] == 'comedy':
+            result += math.floor(aPerformance['audience'] / 5)
+        return result
+
     totalAmount = 0
     volumeCredits = 0
     result = 'Statement for {}'.format(invoice['customer'])
@@ -36,12 +44,7 @@ def statement(invoice, plays):
     for perf in invoice['performances']:
         play = [x for x in plays.items() if x[1]['playID'] == perf['playID']][0][1]
 
-        # add volume credits
-        volumeCredits += max(perf['audience'] - 30, 0)
-        # add extra credit for every ten comedy attendees
-        if play['type'] == 'comedy':
-            volumeCredits += math.floor(perf['audience'] / 5)
-
+        volumeCredits += volumeCreditsFor(perf, play)
         # print line for this order
         result += '  {}: $%.2f  ({} seats) \n'.format(play['name'], perf['audience']) % (amountFor(perf, play) / 100)
         totalAmount += amountFor(perf, play)
