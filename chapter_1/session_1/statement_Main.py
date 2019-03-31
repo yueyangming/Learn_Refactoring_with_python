@@ -38,7 +38,7 @@ def statement(invoice, plays):
         return result
 
     def usd(aNumber):
-        result = '$%.2f' % aNumber
+        result = '$%.2f' % (aNumber / 100)
         return result
 
     totalAmount = 0
@@ -50,9 +50,9 @@ def statement(invoice, plays):
 
         volumeCredits += volumeCreditsFor(perf, play)
         # print line for this order
-        result += '  {}: {}  ({} seats) \n'.format(play['name'], usd(amountFor(perf, play) / 100), perf['audience'])
+        result += '  {}: {}  ({} seats) \n'.format(play['name'], usd(amountFor(perf, play)), perf['audience'])
         totalAmount += amountFor(perf, play)
-    result += 'Amount owed is {}\n'.format(usd(totalAmount / 100))
+    result += 'Amount owed is {}\n'.format(usd(totalAmount))
     result += 'You earned {} credits\n'.format(volumeCredits)
     return result
 
